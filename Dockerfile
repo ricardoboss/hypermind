@@ -2,10 +2,13 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache python3 make g++
+# Install build dependencies
+RUN apk add --no-cache python3 make g++ linux-headers
 
 COPY package*.json ./
-RUN npm install --production
+
+# Install dependencies and rebuild native modules
+RUN npm install --production && npm rebuild
 
 COPY server.js ./
 

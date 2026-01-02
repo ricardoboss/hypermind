@@ -43,12 +43,15 @@ docker run -d \
   --name hypermind \
   --network host \
   --restart unless-stopped \
+  -e PORT=3000 \
   ghcr.io/lklynet/hypermind:latest
 
 ```
 
 > **⚠️ CRITICAL NETWORK NOTE:**
 > Use `--network host`. This is a P2P application that needs to punch through NATs. If you bridge it, the DHT usually fails, and you will be the loneliest node in the multiverse.
+>
+> If you need to change the port (default 3000), update the `PORT` environment variable. Since `--network host` is used, this port will be opened directly on the host.
 
 ### Docker Compose (The Classy Way)
 
@@ -61,6 +64,8 @@ services:
     container_name: hypermind
     network_mode: host
     restart: unless-stopped
+    environment:
+      - PORT=3000
 
 ```
 
