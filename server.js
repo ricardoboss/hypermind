@@ -9,6 +9,9 @@ const PORT = process.env.PORT || 3000;
 const TOPIC_NAME = "hypermind-lklynet-v1";
 const TOPIC = crypto.createHash("sha256").update(TOPIC_NAME).digest();
 
+// Gossip protocol tuning
+const GOSSIP_FANOUT = 3; // Relay to max 3 random peers instead of all
+
 // --- SECURITY ---
 // We use Ed25519 for signatures and a PoW puzzle to prevent Sybil attacks.
 // Difficulty: Hash(ID + nonce) must start with '0000'
@@ -176,12 +179,28 @@ function handleMessage(msg, sourceSocket) {
   }
 }
 
+// Fisher-Yates shuffle for random peer selection
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 function relayMessage(msg, sourceSocket) {
   const data = JSON.stringify(msg) + "\n";
-  for (const socket of swarm.connections) {
-    if (socket !== sourceSocket) {
-      socket.write(data);
-    }
+  
+  // Get all eligible sockets (excluding source)
+  const eligibleSockets = [...swarm.connections].filter(s => s !== sourceSocket);
+  
+  // Apply fanout limiting - only relay to GOSSIP_FANOUT random peers
+  const targetSockets = eligibleSockets.length <= GOSSIP_FANOUT 
+    ? eligibleSockets 
+    : shuffleArray(eligibleSockets).slice(0, GOSSIP_FANOUT);
+  
+  for (const socket of targetSockets) {
+    socket.write(data);
   }
 }
 
