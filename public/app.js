@@ -99,10 +99,113 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+const terminal = document.getElementById('terminal');
+const terminalOutput = document.getElementById('terminal-output');
+const terminalInput = document.getElementById('terminal-input');
+const promptEl = document.querySelector('.prompt');
+let myId = null;
+let myChatHistory = [];
+
+const updatePromptStatus = () => {
+    const now = Date.now();
+    myChatHistory = myChatHistory.filter(t => now - t < 10000);
+    
+    if (myChatHistory.length >= 5) {
+        promptEl.style.color = 'orange';
+    } else {
+        promptEl.style.color = '#4ade80';
+    }
+};
+
+setInterval(updatePromptStatus, 500);
+
+const getColorFromId = (id) => {
+    if (!id) return '#666';
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+        hash = id.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+    return '#' + "00000".substring(0, 6 - c.length) + c;
+}
+
+const appendMessage = (msg) => {
+    const div = document.createElement('div');
+    
+    if (msg.type === 'SYSTEM') {
+        div.className = 'msg-system';
+        div.innerText = `[SYSTEM] ${msg.content}`;
+    } else if (msg.type === 'CHAT') {
+        const senderColor = getColorFromId(msg.sender);
+        const senderName = msg.sender === myId ? 'You' : msg.sender.slice(-4);
+        
+        const senderSpan = document.createElement('span');
+        senderSpan.className = 'msg-sender';
+        senderSpan.style.color = senderColor;
+        senderSpan.innerText = `[${senderName}]`;
+        
+        const contentSpan = document.createElement('span');
+        contentSpan.className = 'msg-content';
+        contentSpan.innerText = ` > ${msg.content}`;
+        
+        div.appendChild(senderSpan);
+        div.appendChild(contentSpan);
+    }
+    
+    terminalOutput.appendChild(div);
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+}
+
+terminalInput.addEventListener('keypress', async (e) => {
+    if (e.key === 'Enter') {
+        const content = terminalInput.value.trim();
+        if (!content) return;
+        
+        terminalInput.value = '';
+        
+        try {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content })
+            });
+
+            if (res.ok) {
+                myChatHistory.push(Date.now());
+                updatePromptStatus();
+            } else if (res.status === 429) {
+                // Force update if we hit the limit unexpectedly
+                // Add a dummy timestamp to force the limit state if not already there
+                if (myChatHistory.length < 5) {
+                    myChatHistory.push(Date.now());
+                }
+                updatePromptStatus();
+            }
+        } catch (err) {
+            console.error('Failed to send message', err);
+        }
+    }
+});
+
 const evtSource = new EventSource("/events");
 
 evtSource.onmessage = (event) => {
     const data = JSON.parse(event.data);
+
+    if (data.type === 'CHAT' || data.type === 'SYSTEM') {
+        appendMessage(data);
+        return;
+    }
+
+    if (data.chatEnabled) {
+        terminal.classList.remove('hidden');
+        document.body.classList.add('chat-active');
+    } else {
+        terminal.classList.add('hidden');
+        document.body.classList.remove('chat-active');
+    }
+    
+    if (data.id) myId = data.id;
 
     updateParticles(data.count);
 
