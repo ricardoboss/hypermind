@@ -26,6 +26,7 @@ const main = async () => {
       id: identity.id,
       diagnostics: diagnostics.getStats(),
       chatEnabled: ENABLE_CHAT,
+      peers: peerManager.getPeersWithIps()
     });
   };
 

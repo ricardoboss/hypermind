@@ -106,6 +106,21 @@ let mapInitialized = false;
 let peerMarkers = {}; // id -> marker
 let ipCache = {}; // ip -> { lat, lon }
 let lastPeerData = [];
+let myLocation = null;
+
+const fetchMyLocation = async () => {
+    if (myLocation) return;
+    try {
+        const res = await fetch('https://ipwho.is/');
+        const data = await res.json();
+        if (data.success) {
+            myLocation = { lat: data.latitude, lon: data.longitude, city: data.city, country: data.country };
+            updateMap(lastPeerData);
+        }
+    } catch (e) {
+        console.error('My location fetch failed', e);
+    }
+}
 
 const openMap = () => {
     document.getElementById('mapModal').classList.add('active');
@@ -116,6 +131,9 @@ const openMap = () => {
             map.invalidateSize();
         }, 100);
     }
+    
+    fetchMyLocation();
+
     if (lastPeerData.length > 0) {
         updateMap(lastPeerData);
     }
@@ -172,13 +190,14 @@ const fetchLocation = async (ip) => {
 }
 
 const updateMap = async (peers) => {
-    if (!mapInitialized || !peers) return;
+    if (!mapInitialized) return;
+    if (!peers) peers = [];
     
     const currentIds = new Set(peers.map(p => p.id));
     
     // Remove old markers
     for (const id in peerMarkers) {
-        if (!currentIds.has(id)) {
+        if (id !== 'me' && !currentIds.has(id)) {
             map.removeLayer(peerMarkers[id]);
             delete peerMarkers[id];
         }
@@ -204,6 +223,21 @@ const updateMap = async (peers) => {
                 peerMarkers[peer.id] = marker;
             }
         }
+    }
+
+    // Add My Location
+    if (myLocation && !peerMarkers['me']) {
+        const marker = L.circleMarker([myLocation.lat, myLocation.lon], {
+            radius: 6,
+            fillColor: "#ffffff",
+            color: "#4ade80",
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 1
+        }).addTo(map);
+        
+        marker.bindPopup(`<b>This Node</b><br>${myLocation.city}, ${myLocation.country}`);
+        peerMarkers['me'] = marker;
     }
 }
 
