@@ -3,7 +3,7 @@
  * Prevents re-relaying messages we've already seen
  */
 class BloomFilter {
-    constructor(size = 10000, hashCount = 3) {
+    constructor(size = 200000, hashCount = 3) {
         this.size = size;
         this.hashCount = hashCount;
         this.bits = new Uint8Array(Math.ceil(size / 8));
