@@ -479,7 +479,7 @@ const appendMessage = (msg) => {
       senderName = msg.sender.slice(-8);
     }
 
-    // Update name map
+    // Update name map (before changing senderName to "You")
     nameToId.set(senderName, msg.sender);
 
     if (msg.sender === myId) senderName = "You";
@@ -504,7 +504,7 @@ const appendMessage = (msg) => {
 
     const contentSpan = document.createElement("span");
     contentSpan.className = "msg-content";
-    // Use formatMessage for rich text rendering
+
     const rawContent = ` > ${msg.content}`;
     if (window.ChatCommands) {
       contentSpan.innerHTML = window.ChatCommands.formatMessage(rawContent);
@@ -536,12 +536,23 @@ terminalInput.addEventListener("keypress", async (e) => {
     if (window.ChatCommands) {
       const result = window.ChatCommands.processInput(content);
       if (result.type === "action") {
-        window.ChatCommands.actions[result.command].execute();
+        const action = window.ChatCommands.actions[result.command];
+        if (action && typeof action.execute === "function") {
+          try {
+            action.execute();
+          } catch (err) {
+            console.error("Command execution error:", err);
+            systemStatusBar.innerText = `[SYSTEM] Command failed: ${result.command}`;
+          }
+        } else {
+          systemStatusBar.innerText = `[SYSTEM] Unknown command: ${result.command}`;
+        }
         return;
       } else if (result.type === "text") {
         content = result.content;
       }
     }
+
 
     let scope = "GLOBAL";
     let target = null;
@@ -607,10 +618,11 @@ terminalInput.addEventListener("keypress", async (e) => {
         target = nameToId.get(potentialName);
         content = msg;
         scope = "GLOBAL";
+      } else if (!msg) {
+        systemStatusBar.innerText = `[SYSTEM] Usage: /${potentialName} <message>`;
+        return;
       } else {
-        // If it looks like a command but we don't recognize the user or command
-        // Prevent sending it as raw text to chat
-        systemStatusBar.innerText = `[SYSTEM] Unknown command or user: ${potentialName}`;
+        systemStatusBar.innerText = `[SYSTEM] Unknown user: ${potentialName}`;
         return;
       }
     }
@@ -817,5 +829,7 @@ function cycleTheme() {
     document.head.appendChild(newLink);
   }
 }
+
+window.cycleTheme = cycleTheme;
 
 document.getElementById("theme-switcher").addEventListener("click", cycleTheme);

@@ -181,6 +181,22 @@ Add this to your `services.yaml`:
 
 To get the icon to work, you have to add the icon to `/app/public/icons`. See detailed [instructions](https://gethomepage.dev/configs/services/#icons).
 
+
+### API Documentation
+
+For developers who are not satisfied in just looking a number on the screen but are craving to add new features, a comprehensive development API documentation is available in [`devdocs/API.md`](devdocs/API.md).
+
+**Available Endpoints:**
+- `GET /api/stats` - Current node statistics
+- `POST /api/chat` - Send P2P chat messages
+- `GET /api/github/latest-release` - Latest release information
+- `GET /events` - Server-Sent Events stream for real-time updates
+- `GET /js/lists.js` - Dynamic adjectives/nouns for screenname generation
+- `GET /js/screenname.js` - Screenname generation logic
+- `GET /` - Main HTML page
+
+The documentation includes security best practices, rate limiting guidelines, modular route structure, and examples for creating new endpoints.
+
 </details>
 
 <details>

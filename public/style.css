@@ -371,3 +371,77 @@ a { color: var(--color-text-anchor-link); text-decoration: none; border-bottom: 
     background: var(--color-modal-stat-div);
     color: var(--color-text-main-label);
 }
+
+.version-notification {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-terminal-bg);
+    border: 1px solid var(--color-terminal-border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 12px 20px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px var(--color-terminal-shadow);
+    transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    min-width: 300px;
+    max-width: 90%;
+}
+
+.version-notification.active {
+    top: 0;
+}
+
+.version-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 0.9rem;
+}
+
+.version-text {
+    color: var(--color-terminal-text-default);
+    font-weight: 500;
+}
+
+.update-link {
+    color: #4ade80;
+    text-decoration: none;
+    border-bottom: 1px solid #4ade80;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+}
+
+.update-link:hover {
+    color: #22c55e;
+    border-color: #22c55e;
+}
+
+.dismiss-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: var(--color-modal-close-btn);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.dismiss-btn:hover {
+    color: var(--color-modal-close-btn-hover);
+}
+
+@media (max-width: 600px) {
+    .version-notification {
+        min-width: unset;
+        width: 90%;
+    }
+    
+    .version-content {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+}
