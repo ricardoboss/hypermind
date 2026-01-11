@@ -20,6 +20,10 @@
 
 ![Volcano theme screenshot](assets/images/volcano-theme.png)
 
+### Hypermind
+
+![Hypermind theme screenshot](assets/images/hypermind-theme.png)
+
 # Contributing custom themes
 
 1. Fork `main` and clone locally to your device.
@@ -35,6 +39,7 @@
         'nord-dark.css',
         'solarized-light.css',
         'volcano.css',
+        'hypermind.css',
         'new-theme.css' /* always add to the end of the list
     ];
    ```

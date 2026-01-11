@@ -1,6 +1,6 @@
 {
   "name": "hypermind",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "A decentralized P2P counter of active deployments",
   "main": "server.js",
   "scripts": {

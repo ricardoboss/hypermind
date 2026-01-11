@@ -823,11 +823,39 @@ const themes = [
   "nord-dark.css",
   "solarized-light.css",
   "volcano.css",
+  "hypermind.css",
 ];
 
 let currentThemeIndex = 0;
+let notificationTimeout;
 
-// Initialize currentThemeIndex based on the theme loaded by index.html
+function showThemeNotification(themeName) {
+  const notification = document.getElementById("theme-notification");
+  if (!notification) return;
+
+  const displayName = themeName
+    .replace(".css", "")
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+  notification.innerText = `Theme: ${displayName}`;
+  notification.classList.remove("hidden");
+
+  notification.offsetHeight;
+  
+  notification.classList.add("show");
+
+  if (notificationTimeout) clearTimeout(notificationTimeout);
+  
+  notificationTimeout = setTimeout(() => {
+    notification.classList.remove("show");
+    setTimeout(() => {
+      notification.classList.add("hidden");
+    }, 300);
+  }, 2000);
+}
+
 const currentThemeLink = document.getElementById("theme-css");
 if (currentThemeLink) {
   const currentThemeName = currentThemeLink.href.split("/").pop();
@@ -856,6 +884,7 @@ function cycleTheme() {
     localStorage.setItem("hypermind-theme", newTheme);
     btn.disabled = false;
     btn.style.opacity = "";
+    showThemeNotification(newTheme);
   };
 
   newLink.onerror = () => {
