@@ -1,7 +1,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body { 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+    font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
     display: flex; 
     justify-content: center; 
     align-items: center; 
@@ -226,7 +226,7 @@ a { color: var(--color-text-anchor-link); text-decoration: none; border-bottom: 
     border-bottom: none;
     border-radius: 8px 8px 0 0;
     z-index: 100;
-    font-family: "Courier New", Courier, monospace;
+    font-family: 'Google Sans Code', "Courier New", Courier, monospace;
     display: flex;
     flex-direction: column;
     padding: 12px;
@@ -274,7 +274,7 @@ a { color: var(--color-text-anchor-link); text-decoration: none; border-bottom: 
     border-radius: 8px 8px 0 0;
     color: var(--color-terminal-tab-arrow);
     cursor: pointer;
-    font-family: monospace;
+    font-family: 'Google Sans Code', monospace;
     font-weight: bold;
     font-size: 14px;
     z-index: 101;

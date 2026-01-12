@@ -1,6 +1,10 @@
 # Current themes
 
-### Default
+### Hypermind (Default)
+
+![Hypermind theme screenshot](assets/images/hypermind-theme.png)
+
+### Hypermind Classic
 
 ![Default theme screenshot](assets/images/default-theme.png)
 
@@ -20,26 +24,22 @@
 
 ![Volcano theme screenshot](assets/images/volcano-theme.png)
 
-### Hypermind
-
-![Hypermind theme screenshot](assets/images/hypermind-theme.png)
-
 # Contributing custom themes
 
 1. Fork `main` and clone locally to your device.
-2. Create a copy of `default.css` (or any other existing theme file).
+2. Create a copy of `hypermind.css` (or any other existing theme file).
    Rename the file `new-theme.css` replacing "new-theme" with the actual name of your theme.
    Filename may not include capitals or spaces (use dashes `-`).
    Only add `dark` or `light` to the filename if the theme you are creating is based on a popular theme (solarized, nord, etc) that has dark and light versions. If a theme does not have two versions, or if a theme is completely made up by you, do not add `dark` or `light`.
 3. Edit the `const themes` block in [`app.js`](public/app.js) with the filename of your new theme so that when you press the theme cycle button in the bottom left corner of the UI, your new theme will appear as one of the options.
    ```js
     const themes = [
-        'default.css',
+        'hypermind.css',
+        'hypermind-classic.css',
         'tokyo-night.css',
         'nord-dark.css',
         'solarized-light.css',
         'volcano.css',
-        'hypermind.css',
         'new-theme.css' /* always add to the end of the list
     ];
    ```

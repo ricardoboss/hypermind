@@ -818,12 +818,12 @@ updateParticles(initialCount);
 animate();
 
 const themes = [
-  "default.css",
+  "hypermind.css",
+  "hypermind-classic.css",
   "tokyo-night.css",
   "nord-dark.css",
   "solarized-light.css",
   "volcano.css",
-  "hypermind.css",
 ];
 
 let currentThemeIndex = 0;
